@@ -11,6 +11,9 @@ The scripts take care of installing build dependencies (using
 yum-builddep), building the package (using rpmbuild) and placing the
 resulting RPMs in output directory.
 
+The setup is based on Fedora packaging how-to:
+http://fedoraproject.org/wiki/How_to_create_an_RPM_package
+
 Usage
 =====
 
