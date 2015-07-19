@@ -1,3 +1,4 @@
+#!/bin/bash
 # Copyright 2015 jitakirin
 #
 # This file is part of devops-utils.
@@ -15,23 +16,15 @@
 # You should have received a copy of the GNU General Public License
 # along with devops-utils.  If not, see <http://www.gnu.org/licenses/>.
 
-# Based on: http://fedoraproject.org/wiki/How_to_create_an_RPM_package
-# And also:
-# - https://registry.hub.docker.com/u/nishigori/rpmbuild
-# - https://registry.hub.docker.com/u/sydneyuni/rpm-build-env/
+set -e "${VERBOSE:+-x}"
 
-FROM centos:7
-MAINTAINER jitakirin <jitakirin@gmail.com>
+SPEC="${1:?}"
+TOPDIR="${HOME}/rpmbuild"
 
-RUN yum install -y rpmdevtools yum-utils && \
-    yum clean all && \
-    rm -r -f /var/cache/*
-ADD docker-init.sh docker-rpm-build.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/docker-*.sh
+# copy sources and spec into rpmbuild's work dir
+cp "${VERBOSE:+-v}" -a --reflink=auto * "${TOPDIR}/SOURCES/"
+cp "${VERBOSE:+-v}" -a --reflink=auto "${SPEC}" "${TOPDIR}/SPECS/"
+SPEC="${TOPDIR}/SPECS/${SPEC##*/}"
 
-RUN useradd rpmbuild
-USER rpmbuild
-RUN rpmdev-setuptree
-USER root
-
-ENTRYPOINT ["/usr/local/bin/docker-init.sh"]
+# build the RPMs
+rpmbuild "${VERBOSE:+-v}" -ba "${SPEC}"
