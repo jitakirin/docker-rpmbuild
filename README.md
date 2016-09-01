@@ -3,9 +3,8 @@ docker-rpmbuild
 
 A minimal docker rpmbuilder image.
 
-Currently based on [centos:7](https://registry.hub.docker.com/_/centos/),
-includes only rpmdevtools and yum-utils on top of that and a couple of
-scripts that automate its use for building RPM packages.
+Based on centos, includes only rpmdevtools and yum-utils and a couple
+of scripts that automate building RPM packages.
 
 The scripts take care of installing build dependencies (using
 yum-builddep), building the package (using rpmbuild) and placing the
@@ -13,6 +12,12 @@ resulting RPMs in output directory.
 
 The setup is based on Fedora packaging how-to:
 http://fedoraproject.org/wiki/How_to_create_an_RPM_package
+
+Supported tags and respective `Dockerfile` links
+================================================
+
+- [`6` (centos:6 Dockerfile)](https://github.com/jitakirin/docker-rpmbuild/blob/c6/Dockerfile) - based on [centos:6](https://registry.hub.docker.com/_/centos/)
+- [`7`, `latest` (centos:7 Dockerfile)](https://github.com/jitakirin/docker-rpmbuild/blob/master/Dockerfile) - based on [centos:7](https://registry.hub.docker.com/_/centos/)
 
 Usage
 =====
