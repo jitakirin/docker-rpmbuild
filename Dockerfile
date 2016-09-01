@@ -20,7 +20,7 @@
 # - https://registry.hub.docker.com/u/nishigori/rpmbuild
 # - https://registry.hub.docker.com/u/sydneyuni/rpm-build-env/
 
-FROM centos:7
+FROM centos:6
 MAINTAINER jitakirin <jitakirin@gmail.com>
 
 RUN yum install -y rpmdevtools yum-utils && \
