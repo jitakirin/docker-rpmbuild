@@ -47,7 +47,7 @@ if ! ${BUILD}; then
 fi
 
 # execute the build as rpmbuild user
-runuser -u rpmbuild /usr/local/bin/docker-rpm-build.sh "$@"
+runuser rpmbuild /usr/local/bin/docker-rpm-build.sh "$@"
 
 # copy the results back; done as root as rpmbuild most likely doesn't
 # have permissions for OUTDIR; ensure ownership of output is consistent
