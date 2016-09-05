@@ -46,6 +46,17 @@ docker run --rm --volume=$PWD:/src --workdir=/src \
 This will create `OUTDIR` if necessary and place the results in
 `OUTDIR/RPMS/${ARCH}/` and `OUTDIR/SRPMS/`.
 
+If your package requires something from a non-core repo to build, you
+can add that repo using a PRE_BUILDDEP hook.  It is an env variable
+that should contain an inline script or command to add the repo you
+need.  E.g. for EPEL do:
+
+```sh
+docker run --rm --volume=$PWD:/src --workdir=/src \
+  --env=PRE_BUILDDEP="yum install -y epel-release" \
+  jitakirin/rpmbuild MYPROJ.spec
+```
+
 Debugging
 =========
 

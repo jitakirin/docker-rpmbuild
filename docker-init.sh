@@ -33,6 +33,11 @@ if [[ -z ${SPEC} || ! -e ${SPEC} ]]; then
   exit 2
 fi
 
+# pre-builddep hook for adding extra repos
+if [[ -n ${PRE_BUILDDEP} ]]; then
+  bash "${VERBOSE:+-x}" -c "${PRE_BUILDDEP}"
+fi
+
 # install build dependencies declared in the specfile
 yum-builddep -y "${SPEC}"
 
