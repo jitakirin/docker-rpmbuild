@@ -13,11 +13,12 @@ resulting RPMs in output directory.
 The setup is based on Fedora packaging how-to:
 http://fedoraproject.org/wiki/How_to_create_an_RPM_package
 
+This repo was forked from [jitakirin/docker-rpmbuild](https://github.com/jitakirin/docker-rpmbuild) 
+
 Supported tags and respective `Dockerfile` links
 ================================================
 
-- [`6` (centos:6 Dockerfile)](https://github.com/jitakirin/docker-rpmbuild/blob/c6/Dockerfile) - based on [centos:6](https://registry.hub.docker.com/_/centos/)
-- [`7`, `latest` (centos:7 Dockerfile)](https://github.com/jitakirin/docker-rpmbuild/blob/master/Dockerfile) - based on [centos:7](https://registry.hub.docker.com/_/centos/)
+- [`latest` (centos:7 Dockerfile)](https://github.com/Setheck/docker-rpmbuild/blob/master/Dockerfile) - based on [centos:7](https://registry.hub.docker.com/_/centos/)
 
 Usage
 =====
@@ -28,8 +29,12 @@ containing the sources (mounted from the host).
 Typical usage:
 
 ```sh
-docker run --rm --volume=$PWD:/src --workdir=/src \
-  jitakirin/rpmbuild MYPROJ.spec
+docker run [--rm] -v /path/to/source:/src -w /src Setheck/rpmbuild -s MYSPEC.spec
+```
+
+For help with usage, you can also consult the -h|--help flag
+```sh
+docker run --rm Setheck/rpmbuild -h
 ```
 
 This will build the project `MYPROJ` in current directory, placing
@@ -39,8 +44,7 @@ directory.
 You can also specify to place the results in a subdirectory:
 
 ```sh
-docker run --rm --volume=$PWD:/src --workdir=/src \
-  jitakirin/rpmbuild MYPROJ.spec OUTDIR
+docker run [--rm] -v /path/to/source:/src -w /src Setheck/rpmbuild -s MYSPEC.spec OUTDIR
 ```
 
 This will create `OUTDIR` if necessary and place the results in
@@ -52,9 +56,17 @@ that should contain an inline script or command to add the repo you
 need.  E.g. for EPEL do:
 
 ```sh
-docker run --rm --volume=$PWD:/src --workdir=/src \
-  --env=PRE_BUILDDEP="yum install -y epel-release" \
-  jitakirin/rpmbuild MYPROJ.spec
+docker run --rm -e PRE_BUILDDEP="yum install -y epel-release" -v /path/to/source:/src -w /src Setheck/rpmbuild -s MYSPEC.spec
+```
+
+You can also gpg sign all resulting RPMs by specifying the signing name,
+keyfile, and password (with `-a "Name;KeyFile;Password"`) and placing
+your keyfile in the source directory with your sources and spec file.
+E.g.
+
+```sh
+docker run --rm -e PRE_BUILDDEP="yum install -y epel-release" -v /path/to/source:/src -w /src Setheck/rpmbuild \
+-s MYSPEC.spec -a "SETH;seth_key.asc;supersecretpw"
 ```
 
 Debugging
@@ -68,7 +80,7 @@ will drop to the shell instead of running rpmbuild, e.g.:
 
 ```sh
 docker run -it -e VERBOSE=1 --rm --volume=$PWD:/src --workdir=/src \
-  jitakirin/rpmbuild --sh MYPROJ.spec
+  Setheck/rpmbuild --sh MYPROJ.spec
 ```
 
 From there you can inspect the environment and you can run the build
@@ -85,18 +97,3 @@ or by running the same script the image uses:
 runuser -u rpmbuild /usr/local/bin/docker-rpm-build.sh \
   ~rpmbuild/SPECS/MYPROJ.spec
 ```
-
-Jenkins
-=======
-
-To use this from a Jenkins builder which itself is running under docker
-(assuming it has access to host's docker socket), use something like:
-
-```sh
-docker run --rm \
-  --volumes-from=JENKINS-VOLUME-CONTAINER --workdir="${WORKSPACE}" \
-  jitakirin/rpmbuild MYPROJ.spec
-```
-
-This will build RPMs and place the results back in Jenkins' workspace
-directory.
