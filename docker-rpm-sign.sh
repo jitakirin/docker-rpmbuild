@@ -1,6 +1,5 @@
 #!/bin/bash
-# Copyright 2015-2016 jitakirin
-# Modified by Setheck 6/28/2018
+# Copyright 2018 Setheck
 #
 # This file is part of docker-rpmbuild.
 #
@@ -17,15 +16,12 @@
 # You should have received a copy of the GNU General Public License
 # along with docker-rpmbuild.  If not, see <http://www.gnu.org/licenses/>.
 
-set -e ${VERBOSE:+-x}
+#!/usr/bin/expect
+set rpmfile [lindex $argv 0]
+set gpgname [lindex $argv 1]
+set passphrase [lindex $argv 2]
 
-SPEC="${1:?}"
-TOPDIR="${HOME}/rpmbuild"
-
-# copy sources and spec into rpmbuild's work dir
-cp ${VERBOSE:+-v} -a --reflink=auto * "${TOPDIR}/SOURCES/"
-cp ${VERBOSE:+-v} -a --reflink=auto "${SPEC}" "${TOPDIR}/SPECS/"
-SPEC="${TOPDIR}/SPECS/${SPEC##*/}"
-
-# build the RPMs
-rpmbuild ${VERBOSE:+-v} -ba "${SPEC}"
+spawn rpmsign --addsign -D "_gpg_name $gpgname" $rpmfile
+expect -exact "Enter pass phrase: "
+send -- "$passphrase\r"
+expect eof
